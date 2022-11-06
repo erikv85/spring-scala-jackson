@@ -19,12 +19,17 @@ class DemoApplicationTests {
     @Test
     void testControllerSerialization() {
         var restTemplate = new RestTemplate();
+
+        /* Set up the rest template's ObjectMapper to handle case classes and
+         * Options correctly.
+         */
         var converter = new MappingJackson2HttpMessageConverter();
         var om = new Jackson2ObjectMapperBuilder()
                 .serializationInclusion(JsonInclude.Include.NON_ABSENT)
                 .build();
         om.registerModule(DefaultScalaModule$.MODULE$);
         converter.setObjectMapper(om);
+
         restTemplate.setMessageConverters(List.of(converter));
         var resp = restTemplate.getForObject("http://localhost:" + port + "/hi", Message.class);
         System.out.println(resp);
